@@ -1,14 +1,17 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
+    alias(libs.plugins.shadow)
 }
 
 group = "com"
 version = "0.0.1"
 
 application {
-    mainClass = "io.ktor.server.netty.EngineMain"
+    mainClass.set("com.ApplicationKt")
 }
 
 kotlin {
@@ -34,4 +37,13 @@ dependencies {
     implementation(libs.h2.database)
     implementation(libs.koin.ktor)
     implementation(libs.koin.logger)
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    manifest {
+        attributes["Main-Class"] = "com.ApplicationKt"
+    }
+    archiveBaseName.set("nasa-app")
+    archiveClassifier.set("")
+    archiveVersion.set("1.0.0")
 }
