@@ -40,6 +40,51 @@ class ApplicationTest {
     }
 
     @Test
+    fun `test root endpoint returns todays photo`() = testApplication {
+
+        environment { config = MapApplicationConfig() }
+        application {
+            install(ServerContentNegotiation) { json() }
+
+            install(Koin) {
+                modules(module {
+                    single {
+                        val mockEngine = MockEngine { _ ->
+                            respond(
+                                content = """{
+                                    "title": "Mocked Space",
+                                    "url": "https://example.com/fake.jpg",
+                                    "media_type": "image",
+                                    "explanation": "This data comes from the MockEngine",
+                                    "date": "2023-01-01"
+                                }""",
+                                status = HttpStatusCode.OK,
+                                headers = headersOf(HttpHeaders.ContentType, "application/json")
+                            )
+                        }
+                        // 3. Configurar el Cliente Mock
+                        HttpClient(mockEngine) {
+                            install(ClientContentNegotiation) {
+                                json(Json { ignoreUnknownKeys = true })
+                            }
+                        }
+                    }
+                    single<NasaRepository> { FakeNasaRepository() }
+                    singleOf(::NasaService)
+                })
+            }
+            configureRouting()
+        }
+
+        // AHORA PROBAMOS LA RAÍZ "/"
+        val response = client.get("/")
+
+        assertEquals(HttpStatusCode.OK, response.status)
+        // Verificamos que devuelve algo (en el mock poníamos fecha fija o dinámica)
+        assertTrue(response.bodyAsText().contains("media_type"))
+    }
+
+    @Test
     fun `test root nasa endpoint returns success using Mocks`() = testApplication {
         environment { config = MapApplicationConfig() }
 

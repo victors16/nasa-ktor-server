@@ -9,6 +9,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
+import java.time.LocalDate
 
 fun Application.configureRouting() {
 
@@ -16,6 +17,12 @@ fun Application.configureRouting() {
     val nasaService by inject<NasaService>()
 
     routing {
+        get("/") {
+            val today = LocalDate.now().toString()
+            val response = nasaService.fetchApod(today)
+            call.respond(response)
+        }
+
         get("/nasa/{date}") {
             val date = call.parameters["date"] ?: return@get
 
