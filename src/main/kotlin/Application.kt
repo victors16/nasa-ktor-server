@@ -1,6 +1,7 @@
 package com
 
 import com.di.appModule
+import com.plugins.configureRouting
 import com.repositories.NasaRepository
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
