@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.mock)
+    implementation(libs.ktor.server.html)
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
     implementation(libs.h2.database)
